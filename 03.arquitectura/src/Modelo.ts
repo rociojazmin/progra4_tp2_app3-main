@@ -1,4 +1,6 @@
-import { openDB } from './database/database';
+import sqlite3 from 'sqlite3';
+
+const db = new sqlite3.Database('./database.db');
 
 export interface VersionDeCodigo {
   codigo: string;
@@ -9,43 +11,27 @@ export interface VersionesDeCodigo {
   versiones: VersionDeCodigo[];
 }
 
-export interface EditorDeCodigo {
-  codigo: string;
+export function AgregarCodigo(codigo: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const fecha = new Date().toISOString();
+    db.run('INSERT INTO VersionDeCodigo (codigo, fecha) VALUES (?, ?)', [codigo, fecha], (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
 }
 
-export interface ResultadoDeCodigo{
-  resultado: string;
-}
-
-
-export async function AgregarCodigo(codigo: string): Promise<void> {
-  const db = await openDB();
-  await db.run('INSERT INTO VersionesDeCodigo (codigo, fecha) VALUES (?, ?)', [codigo, new Date()]);
-}
-
-export async function EjecutarCodigo(codigo: string): Promise<string> {
-  try {
-    // Evitar el uso de eval directamente por seguridad
-    const result = eval(codigo);
-    return result.toString();
-  } catch (error) {
-    return error.toString();
-  }
-}
-
-export async function ConsultarVersionesDeCodigo(): Promise<VersionesDeCodigo> {
-  const db = await openDB();
-  const versiones = await db.all<VersionDeCodigo[]>('SELECT * FROM VersionesDeCodigo');
-  return { versiones };
-}
-
-export async function CrearEditorDeCodigo(): Promise<void> {
-  const db = await openDB();
-  await db.run('CREATE TABLE IF NOT EXISTS VersionesDeCodigo (id INTEGER PRIMARY KEY, codigo TEXT, fecha DATE)');
-}
-
-export async function TraerEditorDeCodigo(): Promise<EditorDeCodigo> {
-  const db = await openDB();
-  const editor = await db.get<EditorDeCodigo>('SELECT codigo FROM VersionesDeCodigo ORDER BY fecha DESC LIMIT 1');
-  return editor || { codigo: '' };
+export function ConsultarVersionesDeCodigo(): Promise<VersionesDeCodigo> {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT codigo, fecha FROM VersionDeCodigo', [], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ versiones: rows.map(row => ({ codigo: row.codigo, fecha: new Date(row.fecha) })) });
+      }
+    });
+  });
 }

@@ -1,35 +1,21 @@
-import { Cocinero, Plan, crearPlan } from "./modelo";
-import { mostrarEnConsola } from "./vista";
+import { Request, Response } from 'express';
+import { AgregarCodigo, ConsultarVersionesDeCodigo } from './Modelo';
 
-export function mostrarPlanDePrueba(semilla: number) {
-    const cocineros: Cocinero[] = ["C1", "C2", "C3", "C4", "C5", "C6"];
-    const nombresTortas: string[] = ["Lemon Pie", "Brownie", "Marquise"];
-    const plan = crearPlan(cocineros, nombresTortas, semilla);
-
-    mostrarEnConsola(plan, "Piso 1", "Piso 2", "Piso 3");
+export async function agregarCodigo(req: Request, res: Response) {
+  const { codigo } = req.body;
+  try {
+    await AgregarCodigo(codigo);
+    res.status(201).send('Código agregado exitosamente');
+  } catch (error) {
+    res.status(500).send('Error al agregar el código');
+  }
 }
 
-export function mostrarPlanDeTPs(semilla: number) {
-    const cocineros: Cocinero[] = [
-        "BORSA,     AGUSTIN ",
-        "BRAGAZZI,  BELEN   ",
-        "FRANCO,    VICTORIA",
-        "GULLERIAN, ANUSH   ",
-        "MIRAMONT,  ROCIO   ",
-        "OLGUIN,    MANUEL  ",
-        "PACIO,     NOELI   ",
-        "RODRIGUES, AGUSTIN ",
-        "ROZENBERG, LUCAS   ",
-        "ZAPOLSKI,  JIMENA  ",
-        "FRANCO,    MARTINA ",
-        "FREIJO,    DIEGO   ",
-    ];
-
-    const nombresTortas: string[] = [
-        "App1", "App2", "App3",
-        "App4", "App5", "App6",
-    ];
-    const plan = crearPlan(cocineros, nombresTortas, semilla);
-
-    mostrarEnConsola(plan, "TP2: modelado", "TP3: backend", "TP4: frontend");
+export async function consultarVersionesDeCodigo(req: Request, res: Response) {
+  try {
+    const versiones = await ConsultarVersionesDeCodigo();
+    res.json(versiones);
+  } catch (error) {
+    res.status(500).send('Error al consultar las versiones de código');
+  }
 }

@@ -1,30 +1,14 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import router from 'routes';
-import { openDb } from './database';
-
-dotenv.config();
+import bodyParser from 'body-parser';
+import router from './vista';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 3000;
 
-app.use(express.json());
+app.use(bodyParser.json());
+
 app.use('/api', router);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
 });
-
-// Inicialización de la base de datos
-async function initDb() {
-  const db = await openDb();
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS versiones (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      codigo TEXT,
-      fecha TEXT
-    )
-  `);
-}
-
-initDb();
