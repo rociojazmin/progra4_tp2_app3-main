@@ -1,10 +1,13 @@
+// src/routes.ts
 import { Router } from 'express';
-import { agregarCodigoController, consultarVersionesDeCodigoController, traerEditorDeCodigoController } from '../controllers/controlador';
+import { agregarCodigo, consultarVersionesDeCodigo, ejecutarCodigo, crearEditorDeCodigo, traerEditorDeCodigo } from './controlador';
 
 const router = Router();
 
-router.post('/codigo', agregarCodigoController);
-router.get('/versiones', consultarVersionesDeCodigoController);
-router.get('/editor', traerEditorDeCodigoController);
+router.post('/codigo', agregarCodigo);
+router.get('/versiones', consultarVersionesDeCodigo);
+router.post('/ejecutar', ejecutarCodigo);
+router.post('/editor/crear', crearEditorDeCodigo);
+router.get('/editor', traerEditorDeCodigo);
 
 export default router;

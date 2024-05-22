@@ -1,14 +1,21 @@
+// src/index.ts
 import express from 'express';
-import bodyParser from 'body-parser';
-import router from './vista';
+import routes from './routes';
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
+app.use(express.json());
 
-app.use('/api', router);
+// Servir los archivos estáticos de Monaco Editor
+app.use('/monaco', express.static(path.join(__dirname, '../node_modules/monaco-editor')));
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+app.use('/api', routes);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
