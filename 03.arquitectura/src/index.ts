@@ -1,21 +1,20 @@
-// src/index.ts
 import express from 'express';
-import routes from './routes';
-import dotenv from 'dotenv';
-import path from 'path';
+import routes from './routes'; // Importa las rutas definidas en otro archivo
+import dotenv from 'dotenv'; // Importa dotenv para cargar variables de entorno desde .env
+import path from 'path'; // Importa la biblioteca path para manejar rutas de archivos
 
-dotenv.config();
+dotenv.config(); // Carga las variables de entorno desde .env
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const app = express(); // Crea una instancia de la aplicación Express
+const PORT = process.env.PORT || 3000; // Obtiene el puerto del entorno o utiliza 3000 por defecto
 
-app.use(express.json());
+app.use(express.json()); // Permite el análisis de solicitudes JSON
 
-// Servir los archivos estáticos de Monaco Editor
+// Servir los archivos estáticos de Monaco Editor desde la ruta '/monaco'
 app.use('/monaco', express.static(path.join(__dirname, '../node_modules/monaco-editor')));
 
-app.use('/api', routes);
+app.use('/api', routes); // Monta las rutas en el prefijo '/api'
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`); // Inicia el servidor y muestra un mensaje en la consola
 });

@@ -1,5 +1,5 @@
 // src/controlador.ts
-import { Request, Response } from 'express';
+import { Request, Response } from 'express'; // Importar objetos Request y Response de Express
 import { AgregarCodigo, ConsultarVersionesDeCodigo, EjecutarCodigo, CrearEditorDeCodigo, TraerEditorDeCodigo } from './Modelo';
 
 export async function agregarCodigo(req: Request, res: Response) {
