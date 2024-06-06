@@ -1,6 +1,8 @@
 // src/controlador.ts
 import { Request, Response } from 'express'; // Importar objetos Request y Response de Express
 import { AgregarCodigo, ConsultarVersionesDeCodigo, EjecutarCodigo, CrearEditorDeCodigo, TraerEditorDeCodigo } from './Modelo';
+import { NodeVM } from 'vm2';
+import { Writable } from 'stream';
 
 export async function agregarCodigo(req: Request, res: Response) {
   const { codigo } = req.body;
@@ -21,15 +23,31 @@ export async function consultarVersionesDeCodigo(req: Request, res: Response) {
   }
 }
 
-export async function ejecutarCodigo(req: Request, res: Response) {
-  const { codigo } = req.body;
+export function ejecutarCodigo(codigo: string): string {
+  let resultado = '';
+
+  // Sobreescribir el método console.log temporalmente
+  const consolaOriginal = console.log;
+  console.log = (...args: any[]) => {
+    resultado += args.join(' ') + '\n';
+  };
+
   try {
-    const resultado = EjecutarCodigo(codigo);
-    res.json({ resultado });
+    eval(codigo);
   } catch (error) {
-    res.status(500).send('Error al ejecutar el código');
+    if (error instanceof Error) {
+      resultado = `Error: ${error.message}`;
+    } else {
+      resultado = `Error: ${String(error)}`;
+    }
   }
+
+  // Restaurar el método console.log original
+  console.log = consolaOriginal;
+
+  return resultado;
 }
+
 
 export async function crearEditorDeCodigo(req: Request, res: Response) {
   try {
