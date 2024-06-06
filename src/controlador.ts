@@ -1,8 +1,7 @@
 // src/controlador.ts
 import { Request, Response } from 'express'; // Importar objetos Request y Response de Express
 import { AgregarCodigo, ConsultarVersionesDeCodigo, EjecutarCodigo, CrearEditorDeCodigo, TraerEditorDeCodigo } from './Modelo';
-import { NodeVM } from 'vm2';
-import { Writable } from 'stream';
+
 
 export async function agregarCodigo(req: Request, res: Response) {
   const { codigo } = req.body;
