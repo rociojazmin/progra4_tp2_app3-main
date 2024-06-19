@@ -54,18 +54,36 @@ export async function ConsultarVersionesDeCodigo(): Promise<VersionesDeCodigo> {
   return { versiones: rows.map(row => ({ codigo: row.codigo, fecha: new Date(row.fecha) })) }; // Mapea los resultados a un arreglo de versiones de código
 }
 
+
 export function EjecutarCodigo(codigo: string): string {
+  let resultado = '';
+
+  // Sobrescribir el método console.log temporalmente
+  const consolaOriginal = console.log;
+  console.log = (...args: any[]) => {
+    resultado += args.join(' ') + '\n';
+  };
+
   try {
-    const resultado = eval(codigo); // Ejecuta el código proporcionado usando la función eval
-    return String(resultado); // Devuelve el resultado como cadena
+    const evalResultado = eval(codigo); // Ejecuta el código proporcionado usando la función eval
+    if (evalResultado !== undefined) {
+      resultado += String(evalResultado); // Agrega el resultado de eval al resultado si no es undefined
+    }
   } catch (error) {
     if (error instanceof Error) { // Comprueba si el error es una instancia de Error
-      return error.message; // Devuelve el mensaje de error
+      resultado = `Error: ${error.message}`; // Devuelve el mensaje de error
+    } else {
+      resultado = `Error: ${String(error)}`; // Si no es un Error, devuelve el error como cadena
     }
-    return String(error); // Si no es un Error, devuelve el error como cadena
   }
+
+  // Restaurar el método console.log original
+  console.log = consolaOriginal;
+
+  return resultado;
 }
 
+ 
 export async function CrearEditorDeCodigo(): Promise<void> {
   await inicializarDB(); // Inicializa la base de datos si no está inicializada
   await db.run('INSERT INTO EditorDeCodigo (codigo) VALUES (?)', ['']); // Inserta un registro inicial en la tabla EditorDeCodigo
