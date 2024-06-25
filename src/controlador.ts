@@ -22,29 +22,14 @@ export async function consultarVersionesDeCodigo(req: Request, res: Response) {
   }
 }
 
-export function ejecutarCodigo(codigo: string): string {
-  let resultado = '';
-
-  // Sobreescribir el método console.log temporalmente
-  const consolaOriginal = console.log;
-  console.log = (...args: any[]) => {
-    resultado += args.join(' ') + '\n';
-  };
-
+export async function ejecutarCodigo(req: Request, res: Response) {
+  const { codigo } = req.body;
   try {
-    eval(codigo);
+    const resultado = EjecutarCodigo(codigo);
+    res.json({ resultado });
   } catch (error) {
-    if (error instanceof Error) {
-      resultado = `Error: ${error.message}`;
-    } else {
-      resultado = `Error: ${String(error)}`;
-    }
+    res.status(500).send('Error al ejecutar el código');
   }
-
-  // Restaurar el método console.log original
-  console.log = consolaOriginal;
-
-  return resultado;
 }
 
 
