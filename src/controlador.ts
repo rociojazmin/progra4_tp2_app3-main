@@ -1,6 +1,6 @@
 // src/controlador.ts
 import { Request, Response } from 'express'; // Importar objetos Request y Response de Express
-import { AgregarCodigo, ConsultarVersionesDeCodigo, EjecutarCodigo, CrearEditorDeCodigo, TraerEditorDeCodigo } from './Modelo';
+import { AgregarCodigo, ConsultarVersionesDeCodigo, EjecutarCodigo, CrearEditorDeCodigo, TraerEditorDeCodigo, ActualizarCodigo } from './Modelo';
 
 
 export async function agregarCodigo(req: Request, res: Response) {
@@ -50,3 +50,14 @@ export async function traerEditorDeCodigo(req: Request, res: Response) {
     res.status(500).send('Error al traer el editor de código');
   }
 }
+
+export async function actualizarCodigo(req: Request, res: Response) {
+  const { id, codigo } = req.body;
+  try {
+    await ActualizarCodigo(id, codigo);
+    res.status(200).send('Código actualizado exitosamente');
+  } catch (error) {
+    res.status(500).send('Error al actualizar el código');
+  }
+}
+

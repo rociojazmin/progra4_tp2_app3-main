@@ -94,3 +94,8 @@ export async function TraerEditorDeCodigo(): Promise<EditorDeCodigo> {
   const row = await db.get('SELECT codigo FROM EditorDeCodigo ORDER BY id DESC LIMIT 1'); // Obtiene el último código del editor almacenado en la base de datos
   return { codigo: row ? row.codigo : '' }; // Devuelve el código del editor o una cadena vacía si no hay registros
 }
+
+export async function ActualizarCodigo(id: number, codigo: string): Promise<void> {
+  await inicializarDB();
+  await db.run('UPDATE VersionDeCodigo SET codigo = ?, fecha = ? WHERE id = ?', [codigo, new Date().toISOString(), id]);
+}
